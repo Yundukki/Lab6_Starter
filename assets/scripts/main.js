@@ -55,17 +55,56 @@ function addRecipesToDocument(recipes) {
  * @param {Array<Object>} recipes An array of recipes
  */
 function saveRecipesToStorage(recipes) {
-  // EXPLORE - START (All explore numbers start with B)
   // B1. TODO - Complete the functionality as described in this function
   //            header. It is possible in only a single line, but should
   //            be no more than a few lines.
+  localStorage.setItem("recipes", JSON.stringify(recipes));
 }
 
-/**
- * Adds the necesarry event handlers to <form> and the clear storage
- * <button>.
- */
 function initFormHandler() {
+  const formEl = document.querySelector('form');
+
+  formEl.addEventListener('submit', (event) => {
+
+    const formData = new FormData(formEl);
+    const recipeObject = {};
+
+    formData.forEach((value, key) => { 
+      recipeObject[key] = value 
+    });
+
+    const recipeCardEl = document.createElement('recipe-card');
+    recipeCardEl.data = {
+      imgSrc: recipeObject.image,
+      imgAlt: recipeObject.title,
+      titleLnk: '',
+      titleTxt: recipeObject.title,
+      organization: '',
+      rating: '',
+      numRatings: '',
+      lengthTime: recipeObject.time,
+      ingredients: recipeObject.ingredients,
+    };
+
+    document.querySelector('main').appendChild(recipeCardEl);
+
+    let recipes = localStorage.getItem('recipes');
+    if (!recipes) {
+      recipes = [];
+    } else {
+      recipes = JSON.parse(recipes);
+    }
+
+    recipes.push(recipeObject);
+    saveRecipesToStorage(recipes);
+  });
+
+  const clearButtonEl = document.querySelector('.danger');
+  clearButtonEl.addEventListener('click', () => {
+    localStorage.clear();
+    document.querySelector('main').innerHTML = '';
+  });
+}
 
   // B2. TODO - Get a reference to the <form> element
   
@@ -88,6 +127,4 @@ function initFormHandler() {
   
   // Steps B12 & B13 will occur inside the event listener from step B11
   // B12. TODO - Clear the local storage
-  // B13. TODO - Delete the contents of <main>
-
-}
+  // B13. TODO - Delete the contents of <main
